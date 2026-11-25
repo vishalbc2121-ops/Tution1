@@ -1,0 +1,43 @@
+function cleanTextForSpeech(markdownStr) {
+  if (!markdownStr) return '';
+
+  let text = String(markdownStr);
+
+  // 1. Remove code blocks and inline code backticks
+  text = text.replace(/```[\s\S]*?```/g, ' ');
+  text = text.replace(/`([^`]*)`/g, '$1');
+
+  // 2. Remove markdown bold/italic/heading/blockquote markers
+  text = text.replace(/^\s{0,3}#{1,6}\s*/gm, '');
+  text = text.replace(/^\s*>\s?/gm, '');
+  text = text.replace(/(\*\*|__)(.*?)\1/g, '$2');
+  text = text.replace(/(\*|_)(.*?)\1/g, '$2');
+  text = text.replace(/~~(.*?)~~/g, '$1');
+
+  // 3. Remove emojis, pictographs, and variation/ZWJ selectors
+  try {
+    text = text.replace(/\p{Extended_Pictographic}/gu, ' ');
+    text = text.replace(/\p{Regional_Indicator}/gu, ' ');
+  } catch (e) {
+    // Fallback for older JS engines without Unicode property escapes
+    text = text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, ' ');
+  }
+  text = text.replace(/[\uFE00-\uFE0F\u200D]/g, '');
+
+  // 4. Clean list markers and noisy symbols/signs
+  text = text.replace(/^\s*[-*•+]\s+/gm, '');
+  text = text.replace(/^\s*\d+[.)]\s+/gm, '');
+  text = text.replace(/[\[\](){}<>|\\/^~@#$%&*+=_]/g, ' ');
+
+  // 5. Normalize line breaks into natural pauses and collapse extra spaces
+  text = text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => (/[।.!?]$/.test(line) ? line : `${line}।`))
+    .join(' ');
+
+  text = text.replace(/\s+/g, ' ').trim();
+
+  return text;
+}
