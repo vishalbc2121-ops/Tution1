@@ -1,43 +1,1062 @@
-function cleanTextForSpeech(markdownStr) {
-  if (!markdownStr) return '';
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class 6 AI Study Tutor — Ankita's Learning Buddy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tutorPrimary: '#4F46E5',
+            tutorAccent: '#0EA5E9',
+            tutorWarm: '#FFFBEB'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+    .message-content p {
+      margin-bottom: 0.55rem;
+    }
+    .message-content p:last-child {
+      margin-bottom: 0;
+    }
+    .message-content ul,
+    .message-content ol {
+      margin-left: 1.25rem;
+      margin-bottom: 0.6rem;
+      list-style-type: disc;
+    }
+    .message-content ol {
+      list-style-type: decimal;
+    }
+    .message-content li {
+      margin-bottom: 0.25rem;
+    }
+    .message-content code {
+      background: rgba(15, 23, 42, 0.08);
+      padding: 0.1rem 0.35rem;
+      border-radius: 0.3rem;
+      font-size: 0.9em;
+    }
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .recording-pulse {
+      animation: pulse-ring 1.4s infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen overflow-hidden flex select-none sm:select-auto">
 
-  let text = String(markdownStr);
+  <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/40 z-20 hidden lg:hidden"></div>
 
-  // 1. Remove code blocks and inline code backticks
-  text = text.replace(/```[\s\S]*?```/g, ' ');
-  text = text.replace(/`([^`]*)`/g, '$1');
+  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-200 -translate-x-full lg:translate-x-0">
+    <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-indigo-600 to-sky-500 text-white">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">📘</span>
+          <div>
+            <h1 class="font-bold text-base leading-tight">Class 6 Study Buddy</h1>
+            <p class="text-xs text-indigo-100">CBSE / NCERT • Ankita</p>
+          </div>
+        </div>
+        <button onclick="toggleSidebar(false)" class="lg:hidden p-1.5 rounded-lg hover:bg-white/20" title="Close sidebar">
+          ✕
+        </button>
+      </div>
+    </div>
 
-  // 2. Remove markdown bold/italic/heading/blockquote markers
-  text = text.replace(/^\s{0,3}#{1,6}\s*/gm, '');
-  text = text.replace(/^\s*>\s?/gm, '');
-  text = text.replace(/(\*\*|__)(.*?)\1/g, '$2');
-  text = text.replace(/(\*|_)(.*?)\1/g, '$2');
-  text = text.replace(/~~(.*?)~~/g, '$1');
+    <div class="p-3 border-b border-slate-100 bg-slate-50/70">
+      <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Nayi Subject Chat Shuru Karein</p>
+      <div class="grid grid-cols-2 gap-1.5">
+        <button onclick="createNewSubjectChat('Maths')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200/60 transition text-left">
+          ➕ Maths
+        </button>
+        <button onclick="createNewSubjectChat('Science')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/60 transition text-left">
+          ➕ Science
+        </button>
+        <button onclick="createNewSubjectChat('English')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/60 transition text-left">
+          ➕ English
+        </button>
+        <button onclick="createNewSubjectChat('Social Science')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/60 transition text-left">
+          ➕ SST
+        </button>
+      </div>
+    </div>
 
-  // 3. Remove emojis, pictographs, and variation/ZWJ selectors
-  try {
-    text = text.replace(/\p{Extended_Pictographic}/gu, ' ');
-    text = text.replace(/\p{Regional_Indicator}/gu, ' ');
-  } catch (e) {
-    // Fallback for older JS engines without Unicode property escapes
-    text = text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, ' ');
-  }
-  text = text.replace(/[\uFE00-\uFE0F\u200D]/g, '');
+    <div class="flex-1 overflow-y-auto p-3 space-y-1.5" id="chatList"></div>
 
-  // 4. Clean list markers and noisy symbols/signs
-  text = text.replace(/^\s*[-*•+]\s+/gm, '');
-  text = text.replace(/^\s*\d+[.)]\s+/gm, '');
-  text = text.replace(/[\[\](){}<>|\\/^~@#$%&*+=_]/g, ' ');
+    <div class="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-2">
+      <button onclick="openSettings()" class="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition">
+        <span>⚙️</span> Settings
+      </button>
+      <button onclick="clearAllChats()" class="text-xs font-medium px-3 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/60 transition" title="Saari purani chats mitaayein">
+        🗑️
+      </button>
+    </div>
+  </aside>
 
-  // 5. Normalize line breaks into natural pauses and collapse extra spaces
-  text = text
-    .split('\n')
-    .map(line => line.trim())
-    .filter(Boolean)
-    .map(line => (/[।.!?]$/.test(line) ? line : `${line}।`))
-    .join(' ');
+  <main class="flex-1 flex flex-col h-screen min-w-0 bg-gradient-to-b from-indigo-50/40 via-white to-slate-50">
+    <header class="h-16 bg-white/95 backdrop-blur border-b border-slate-200 px-3 sm:px-5 flex items-center justify-between gap-2 shrink-0">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <button onclick="toggleSidebar(true)" class="p-2 rounded-xl hover:bg-slate-100 text-slate-700 transition" title="Menu">
+          ☰
+        </button>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span id="activeSubjectBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 shrink-0">
+              Maths
+            </span>
+            <h2 id="activeChatTitle" class="font-bold text-slate-800 text-sm sm:text-base truncate">
+              Class 6 Maths Doubt Solver
+            </h2>
+          </div>
+          <p id="activeModelSubtitle" class="text-[11px] text-slate-500 truncate">
+            Model: openrouter/free • Hindi Audio & Photo Ready
+          </p>
+        </div>
+      </div>
 
-  text = text.replace(/\s+/g, ' ').trim();
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="autoSpeakBtn" onclick="toggleAutoSpeak()" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100" title="AI ke jawab apne aap Hindi aawaz mein sunne ke liye">
+          <span id="autoSpeakIcon">🔊</span>
+          <span id="autoSpeakLabel" class="hidden sm:inline">Auto-Speak: ON</span>
+        </button>
+        <button onclick="openSettings()" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition" title="API Key, Model aur Chapter Notes">
+          <span>⚙️</span>
+          <span class="hidden md:inline">Settings</span>
+        </button>
+      </div>
+    </header>
 
-  return text;
-}
+    <div id="statusBanner" class="hidden px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between gap-2 border-b"></div>
+
+    <div id="chatMessages" class="flex-1 overflow-y-auto px-3 sm:px-6 py-5 space-y-4"></div>
+
+    <div class="bg-white border-t border-slate-200 px-3 sm:px-6 pt-2.5 pb-3 shrink-0">
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+        <button type="button" onclick="applyQuickChip('Maths Step-by-Step')" class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 transition">
+          ➗ Maths Step-by-Step
+        </button>
+        <button type="button" onclick="applyQuickChip('Science Samjhao')" class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 transition">
+          🔬 Science Samjhao
+        </button>
+        <button type="button" onclick="applyQuickChip('5 MCQ Quiz Banao')" class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 transition">
+          📝 5 MCQ Quiz Banao
+        </button>
+        <button type="button" onclick="stopSpeaking()" id="stopAudioBtn" class="hidden shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition">
+          ⏹️ Audio Roko
+        </button>
+      </div>
+
+      <div id="imagePreviewContainer" class="hidden mb-2 p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <img id="imagePreviewThumb" src="" alt="Uploaded page preview" class="h-14 w-14 object-cover rounded-lg border border-slate-300 shrink-0" />
+          <div class="min-w-0">
+            <p class="text-xs font-semibold text-slate-700 truncate" id="imageFileName">Photo attached</p>
+            <p class="text-[11px] text-slate-500">Saath mein apna sawaal likhein ya bolein</p>
+          </div>
+        </div>
+        <button type="button" onclick="clearAttachedImage()" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 transition">
+          Hatayein ✕
+        </button>
+      </div>
+
+      <form id="chatForm" onsubmit="handleSendMessage(event)" class="flex items-end gap-2">
+        <input type="file" id="imageInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event)" />
+
+        <button type="button" onclick="document.getElementById('imageInput').click()" class="h-11 w-11 rounded-2xl bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 border border-slate-200 flex items-center justify-center text-lg shrink-0 transition" title="Textbook ya copy ki photo upload karein">
+          📷
+        </button>
+
+        <button type="button" id="micBtn" onclick="toggleVoiceInput()" class="h-11 w-11 rounded-2xl bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 border border-slate-200 flex items-center justify-center text-lg shrink-0 transition" title="Hindi mein bol kar sawaal puchein (hi-IN)">
+          🎤
+        </button>
+
+        <textarea id="messageInput" rows="1" placeholder="Yahan sawaal likhein ya mic/photo ka use karein..." class="flex-1 resize-none max-h-32 rounded-2xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 text-sm sm:text-base text-slate-800 outline-none transition bg-white" onkeydown="handleInputKeydown(event)"></textarea>
+
+        <button type="submit" id="sendBtn" class="h-11 px-4 sm:px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold text-sm flex items-center justify-center gap-1.5 shrink-0 shadow-sm transition">
+          <span>Bhejein</span>
+          <span>➤</span>
+        </button>
+      </form>
+      <p id="voiceStatusText" class="text-[11px] text-slate-400 mt-1.5 px-1 hidden"></p>
+    </div>
+  </main>
+
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-2xs hidden items-center justify-center p-3 sm:p-5">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 class="font-bold text-base sm:text-lg text-slate-800">⚙️ Study Tutor Settings</h3>
+          <p class="text-xs text-slate-500">API Key, Model, Tutor Rules aur Chapter Notes yahan set karein</p>
+        </div>
+        <button onclick="closeSettings()" class="p-2 rounded-xl hover:bg-slate-200/70 text-slate-600 transition">✕</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 text-sm">
+        <div>
+          <label for="apiKeyInput" class="block font-semibold text-slate-700 mb-1">
+            OpenRouter API Key <span class="text-rose-500">*</span>
+          </label>
+          <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 outline-none font-mono text-xs sm:text-sm" />
+          <p class="text-[11px] text-slate-500 mt-1">
+            Aapki key sirf is browser ke <code class="bg-slate-100 px-1 rounded">LocalStorage</code> mein save hoti hai.
+          </p>
+        </div>
+
+        <div>
+          <label for="modelIdInput" class="block font-semibold text-slate-700 mb-1">
+            OpenRouter Model ID (Vision + Text)
+          </label>
+          <input type="text" id="modelIdInput" placeholder="openrouter/free" class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 outline-none font-mono text-xs sm:text-sm" />
+          <p class="text-[11px] text-slate-500 mt-1">
+            Default <code class="bg-slate-100 px-1 rounded">openrouter/free</code> rakhein ya kisi free vision/chat model ki ID daalein.
+          </p>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label for="systemPromptInput" class="font-semibold text-slate-700">
+              Tutor System Prompt
+            </label>
+            <button type="button" onclick="resetDefaultSystemPrompt()" class="text-xs font-semibold text-indigo-600 hover:underline">
+              Default Reset
+            </button>
+          </div>
+          <textarea id="systemPromptInput" rows="6" class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 outline-none text-xs sm:text-sm leading-relaxed"></textarea>
+        </div>
+
+        <div>
+          <label for="chapterNotesInput" class="block font-semibold text-slate-700 mb-1">
+            📚 Today's Chapter Notes / Lesson Context (Optional)
+          </label>
+          <textarea id="chapterNotesInput" rows="4" placeholder="Aaj ke chapter ki summary, definitions, formulas ya textbook paragraphs yahan paste karein..." class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 outline-none text-xs sm:text-sm leading-relaxed"></textarea>
+          <p class="text-[11px] text-slate-500 mt-1">
+            Yahan jo notes likhenge, AI unhe dhyan mein rakh kar hi sawaalon ke jawab dega.
+          </p>
+        </div>
+      </div>
+
+      <div class="px-5 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-2.5">
+        <button onclick="closeSettings()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-200/70 transition">
+          Cancel
+        </button>
+        <button onclick="saveSettings()" class="px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEYS = {
+      SETTINGS: 'ankita_class6_tutor_settings_v1',
+      CHATS: 'ankita_class6_tutor_chats_v1',
+      ACTIVE_CHAT: 'ankita_class6_tutor_active_chat_v1'
+    };
+
+    const DEFAULT_SYSTEM_PROMPT = `You are a friendly, patient, and encouraging personal tutor for Ankita, a Class 6 student in India (CBSE/NCERT level).
+
+Your teaching rules:
+1. Reply in simple, conversational Hindi (Devanagari script) mixed with common English school terms (like Fraction, Photosynthesis, Force, Noun, Triangle, LCM) so Hindi text-to-speech reads it naturally and clearly.
+2. Explain concepts step-by-step using short bullet points and everyday Indian examples.
+3. For Maths and Science, explain the method and steps first before giving the final answer.
+4. Never just dump a direct homework answer—guide her through the logic and ask 1 short check-for-understanding question at the end.
+5. Keep the tone warm, supportive, and easy for an 11-12-year-old student to understand.`;
+
+    const SUBJECT_META = {
+      Maths: { badgeClass: 'bg-indigo-100 text-indigo-700', icon: '➗', defaultTitle: 'Class 6 Maths Doubt Solver' },
+      Science: { badgeClass: 'bg-emerald-100 text-emerald-700', icon: '🔬', defaultTitle: 'Class 6 Science Explorer' },
+      English: { badgeClass: 'bg-amber-100 text-amber-800', icon: '📖', defaultTitle: 'Class 6 English Helper' },
+      'Social Science': { badgeClass: 'bg-sky-100 text-sky-700', icon: '🌍', defaultTitle: 'Class 6 Social Science Guide' }
+    };
+
+    let state = {
+      settings: {
+        apiKey: '',
+        modelId: 'openrouter/free',
+        systemPrompt: DEFAULT_SYSTEM_PROMPT,
+        chapterNotes: '',
+        autoSpeak: true
+      },
+      chats: [],
+      activeChatId: null,
+      attachedImage: null,
+      isSending: false,
+      recognition: null,
+      isRecording: false,
+      currentUtterance: null
+    };
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatRichText(rawText) {
+      const safe = escapeHtml(rawText || '');
+      const lines = safe.split('\n');
+      let html = '';
+      let inUl = false;
+      let inOl = false;
+
+      const closeLists = () => {
+        if (inUl) { html += '</ul>'; inUl = false; }
+        if (inOl) { html += '</ol>'; inOl = false; }
+      };
+
+      const inlineFormat = (line) => {
+        return line
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>');
+      };
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          closeLists();
+          continue;
+        }
+        if (/^[-*•]\s+/.test(trimmed)) {
+          if (inOl) { html += '</ol>'; inOl = false; }
+          if (!inUl) { html += '<ul>'; inUl = true; }
+          html += `<li>${inlineFormat(trimmed.replace(/^[-*•]\s+/, ''))}</li>`;
+        } else if (/^\d+[.)]\s+/.test(trimmed)) {
+          if (inUl) { html += '</ul>'; inUl = false; }
+          if (!inOl) { html += '<ol>'; inOl = true; }
+          html += `<li>${inlineFormat(trimmed.replace(/^\d+[.)]\s+/, ''))}</li>`;
+        } else {
+          closeLists();
+          html += `<p>${inlineFormat(trimmed)}</p>`;
+        }
+      }
+      closeLists();
+      return html || '<p></p>';
+    }
+
+    function showBanner(message, type = 'warn') {
+      const banner = document.getElementById('statusBanner');
+      if (!message) {
+        banner.className = 'hidden px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between gap-2 border-b';
+        banner.innerHTML = '';
+        return;
+      }
+      const styles = {
+        warn: 'bg-amber-50 text-amber-900 border-amber-200',
+        error: 'bg-rose-50 text-rose-800 border-rose-200',
+        info: 'bg-sky-50 text-sky-800 border-sky-200'
+      };
+      banner.className = `px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between gap-2 border-b ${styles[type] || styles.warn}`;
+      banner.innerHTML = `
+        <span>${escapeHtml(message)}</span>
+        <button onclick="showBanner('')" class="text-xs font-bold opacity-70 hover:opacity-100 px-1.5">✕</button>
+      `;
+    }
+
+    function loadState() {
+      try {
+        const savedSettings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS) || '{}');
+        state.settings = {
+          apiKey: typeof savedSettings.apiKey === 'string' ? savedSettings.apiKey : '',
+          modelId: typeof savedSettings.modelId === 'string' && savedSettings.modelId.trim() ? savedSettings.modelId.trim() : 'openrouter/free',
+          systemPrompt: typeof savedSettings.systemPrompt === 'string' && savedSettings.systemPrompt.trim() ? savedSettings.systemPrompt : DEFAULT_SYSTEM_PROMPT,
+          chapterNotes: typeof savedSettings.chapterNotes === 'string' ? savedSettings.chapterNotes : '',
+          autoSpeak: typeof savedSettings.autoSpeak === 'boolean' ? savedSettings.autoSpeak : true
+        };
+      } catch (e) {
+        console.warn('Settings load failed:', e);
+      }
+
+      try {
+        const savedChats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CHATS) || '[]');
+        if (Array.isArray(savedChats) && savedChats.length > 0) {
+          state.chats = savedChats;
+        }
+      } catch (e) {
+        console.warn('Chats load failed:', e);
+      }
+
+      if (state.chats.length === 0) {
+        const welcomeChat = buildChatObject('Maths', 'Class 6 Maths Doubt Solver');
+        welcomeChat.messages.push({
+          id: 'msg-welcome-1',
+          role: 'assistant',
+          text: 'नमस्ते Ankita! मैं तुम्हारा Class 6 Study Buddy हूँ। 😊\n\n- किसी भी **Maths** या **Science** topic को step-by-step समझ सकती हो।\n- Copy या textbook page की **photo** upload करके सवाल पूछ सकती हो।\n- **🎤 Mic** दबाकर Hindi में बोल भी सकती हो या **🔊** से जवाब सुन सकती हो।\n\nआज हम किस topic या chapter से शुरू करें?',
+          timestamp: Date.now()
+        });
+        state.chats.push(welcomeChat);
+      }
+
+      const savedActiveId = localStorage.getItem(STORAGE_KEYS.ACTIVE_CHAT);
+      const found = state.chats.find(c => c.id === savedActiveId);
+      state.activeChatId = found ? found.id : state.chats[0].id;
+    }
+
+    function persistChats() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.CHATS, JSON.stringify(state.chats));
+        if (state.activeChatId) {
+          localStorage.setItem(STORAGE_KEYS.ACTIVE_CHAT, state.activeChatId);
+        }
+      } catch (e) {
+        showBanner('Browser storage full ho gayi hai. Purani chats ya badi photos kam karein.', 'warn');
+      }
+    }
+
+    function persistSettings() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(state.settings));
+      } catch (e) {
+        showBanner('Settings save karne mein dikkat aayi.', 'error');
+      }
+    }
+
+    function buildChatObject(subject = 'Maths', customTitle = '') {
+      const meta = SUBJECT_META[subject] || SUBJECT_META.Maths;
+      return {
+        id: 'chat_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+        subject,
+        title: customTitle || meta.defaultTitle,
+        messages: [],
+        updatedAt: Date.now()
+      };
+    }
+
+    function getActiveChat() {
+      return state.chats.find(c => c.id === state.activeChatId) || state.chats[0];
+    }
+
+    function createNewSubjectChat(subject) {
+      const newChat = buildChatObject(subject);
+      const meta = SUBJECT_META[subject] || SUBJECT_META.Maths;
+      newChat.messages.push({
+        id: 'msg_' + Date.now(),
+        role: 'assistant',
+        text: `**${subject}** ki nayi study chat shuru ho gayi hai! ${meta.icon}\n\nApna chapter, topic, ya homework ka doubt poochho—hum step-by-step samjhenge.`,
+        timestamp: Date.now()
+      });
+      state.chats.unshift(newChat);
+      state.activeChatId = newChat.id;
+      persistChats();
+      renderAll();
+      toggleSidebar(false);
+    }
+
+    function selectChat(chatId) {
+      state.activeChatId = chatId;
+      persistChats();
+      renderAll();
+      toggleSidebar(false);
+    }
+
+    function deleteChat(event, chatId) {
+      event.stopPropagation();
+      if (state.chats.length === 1) {
+        showBanner('Kam se kam ek chat thread rehna zaroori hai.', 'info');
+        return;
+      }
+      state.chats = state.chats.filter(c => c.id !== chatId);
+      if (state.activeChatId === chatId) {
+        state.activeChatId = state.chats[0].id;
+      }
+      persistChats();
+      renderAll();
+    }
+
+    function clearAllChats() {
+      if (!confirm('Kya aap waqai saari saved chats mitaana chahte hain?')) return;
+      stopSpeaking();
+      const fresh = buildChatObject('Maths', 'Class 6 Maths Doubt Solver');
+      fresh.messages.push({
+        id: 'msg_reset_' + Date.now(),
+        role: 'assistant',
+        text: 'Saari purani chats clear kar di gayi hain. Nayi padhai shuru karte hain—aaj kya padhna hai?',
+        timestamp: Date.now()
+      });
+      state.chats = [fresh];
+      state.activeChatId = fresh.id;
+      persistChats();
+      renderAll();
+    }
+
+    function toggleSidebar(open) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const shouldOpen = typeof open === 'boolean' ? open : sidebar.classList.contains('-translate-x-full');
+      if (shouldOpen) {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    function renderSidebar() {
+      const listEl = document.getElementById('chatList');
+      const sorted = [...state.chats].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+      listEl.innerHTML = sorted.map(chat => {
+        const meta = SUBJECT_META[chat.subject] || SUBJECT_META.Maths;
+        const isActive = chat.id === state.activeChatId;
+        const lastMsg = chat.messages[chat.messages.length - 1];
+        const preview = lastMsg ? (lastMsg.text || (lastMsg.imageDataUrl ? '[Photo]' : '')).replace(/\n+/g, ' ') : 'Koi message nahi';
+
+        return `
+          <div onclick="selectChat('${chat.id}')" class="group cursor-pointer rounded-xl p-2.5 border transition ${
+            isActive
+              ? 'bg-indigo-50 border-indigo-300 shadow-2xs'
+              : 'bg-white hover:bg-slate-50 border-transparent hover:border-slate-200'
+          }">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${meta.badgeClass}">
+                ${meta.icon} ${escapeHtml(chat.subject)}
+              </span>
+              <button onclick="deleteChat(event, '${chat.id}')" class="opacity-60 group-hover:opacity-100 text-xs text-slate-400 hover:text-rose-600 px-1 rounded transition" title="Chat hatayein">
+                ✕
+              </button>
+            </div>
+            <p class="font-semibold text-xs sm:text-sm text-slate-800 mt-1.5 truncate">${escapeHtml(chat.title)}</p>
+            <p class="text-[11px] text-slate-500 truncate mt-0.5">${escapeHtml(preview)}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderHeader() {
+      const chat = getActiveChat();
+      const meta = SUBJECT_META[chat.subject] || SUBJECT_META.Maths;
+      const badge = document.getElementById('activeSubjectBadge');
+      badge.className = `text-[11px] font-bold px-2.5 py-0.5 rounded-full shrink-0 ${meta.badgeClass}`;
+      badge.textContent = `${meta.icon} ${chat.subject}`;
+
+      document.getElementById('activeChatTitle').textContent = chat.title;
+      const notesStatus = state.settings.chapterNotes.trim() ? ' • Chapter Notes Active' : '';
+      document.getElementById('activeModelSubtitle').textContent =
+        `Model: ${state.settings.modelId || 'openrouter/free'}${notesStatus}`;
+
+      const autoBtn = document.getElementById('autoSpeakBtn');
+      const autoLabel = document.getElementById('autoSpeakLabel');
+      if (state.settings.autoSpeak) {
+        autoBtn.className = 'flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
+        autoLabel.textContent = 'Auto-Speak: ON';
+      } else {
+        autoBtn.className = 'flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200';
+        autoLabel.textContent = 'Auto-Speak: OFF';
+      }
+    }
+
+    function renderMessages() {
+      const chat = getActiveChat();
+      const container = document.getElementById('chatMessages');
+
+      container.innerHTML = chat.messages.map(msg => {
+        const isUser = msg.role === 'user';
+        const imageHtml = msg.imageDataUrl
+          ? `<img src="${msg.imageDataUrl}" alt="Uploaded study photo" class="max-h-60 rounded-xl border border-slate-200 mb-2 object-contain bg-white" />`
+          : '';
+
+        if (isUser) {
+          return `
+            <div class="flex justify-end">
+              <div class="max-w-[86%] sm:max-w-[72%] rounded-2xl rounded-tr-sm bg-indigo-600 text-white px-4 py-3 shadow-xs">
+                ${imageHtml}
+                <div class="message-content text-sm sm:text-[15px] leading-relaxed">${formatRichText(msg.text)}</div>
+              </div>
+            </div>
+          `;
+        }
+
+        const encodedText = encodeURIComponent(msg.text || '');
+        return `
+          <div class="flex items-start gap-2.5">
+            <div class="h-8 w-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">
+              🎓
+            </div>
+            <div class="max-w-[88%] sm:max-w-[75%] rounded-2xl rounded-tl-sm bg-white border border-slate-200/90 text-slate-800 px-4 py-3 shadow-2xs">
+              ${imageHtml}
+              <div class="message-content text-sm sm:text-[15px] leading-relaxed">${formatRichText(msg.text)}</div>
+              <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                <button type="button" onclick="speakHindiText(decodeURIComponent('${encodedText}'))" class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition">
+                  <span>🔊</span>
+                  <span>Listen (Hindi)</span>
+                </button>
+                <span class="text-[10px] text-slate-400">Class 6 Tutor</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (state.isSending) {
+        container.innerHTML += `
+          <div id="typingIndicator" class="flex items-start gap-2.5">
+            <div class="h-8 w-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-bold shrink-0">
+              🎓
+            </div>
+            <div class="rounded-2xl rounded-tl-sm bg-white border border-slate-200 px-4 py-3 text-xs sm:text-sm text-slate-500 flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-bounce"></span>
+              <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style="animation-delay:0.15s"></span>
+              <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style="animation-delay:0.3s"></span>
+              <span class="ml-1">Tutor step-by-step jawab likh raha hai...</span>
+            </div>
+          </div>
+        `;
+      }
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function renderAll() {
+      renderSidebar();
+      renderHeader();
+      renderMessages();
+    }
+
+    function openSettings() {
+      document.getElementById('apiKeyInput').value = state.settings.apiKey || '';
+      document.getElementById('modelIdInput').value = state.settings.modelId || 'openrouter/free';
+      document.getElementById('systemPromptInput').value = state.settings.systemPrompt || DEFAULT_SYSTEM_PROMPT;
+      document.getElementById('chapterNotesInput').value = state.settings.chapterNotes || '';
+      const modal = document.getElementById('settingsModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeSettings() {
+      const modal = document.getElementById('settingsModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function resetDefaultSystemPrompt() {
+      document.getElementById('systemPromptInput').value = DEFAULT_SYSTEM_PROMPT;
+    }
+
+    function saveSettings() {
+      const apiKey = document.getElementById('apiKeyInput').value.trim();
+      const modelId = document.getElementById('modelIdInput').value.trim() || 'openrouter/free';
+      const systemPrompt = document.getElementById('systemPromptInput').value.trim() || DEFAULT_SYSTEM_PROMPT;
+      const chapterNotes = document.getElementById('chapterNotesInput').value;
+
+      state.settings.apiKey = apiKey;
+      state.settings.modelId = modelId;
+      state.settings.systemPrompt = systemPrompt;
+      state.settings.chapterNotes = chapterNotes;
+
+      persistSettings();
+      renderHeader();
+      closeSettings();
+
+      if (!apiKey) {
+        showBanner('API Key abhi khali hai. Sawaal poochne ke liye Settings mein OpenRouter API Key daalein.', 'warn');
+      } else {
+        showBanner('Settings save ho gayi hain!', 'info');
+        setTimeout(() => showBanner(''), 2500);
+      }
+    }
+
+    function applyQuickChip(chipType) {
+      const input = document.getElementById('messageInput');
+      const chat = getActiveChat();
+      const subj = chat.subject;
+
+      const templates = {
+        'Maths Step-by-Step': `Is ${subj === 'Maths' ? 'Maths' : 'topic'} ka sawaal step-by-step samjhao aur aakhir mein ek practice question do: `,
+        'Science Samjhao': `Yeh Science concept aasaan Hindi mein rozmarra ki zindagi ke example ke saath samjhao: `,
+        '5 MCQ Quiz Banao': `Aaj ke ${subj} topic par 5 simple Class 6 MCQs banao. Pehle sawaal poocho, answer abhi mat batao:`
+      };
+
+      input.value = templates[chipType] || `${chipType}: `;
+      autoResizeTextarea(input);
+      input.focus();
+    }
+
+    function handleImageUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showBanner('Kripya sirf image file (JPG, PNG, WEBP) select karein.', 'warn');
+        event.target.value = '';
+        return;
+      }
+
+      const maxBytes = 4.5 * 1024 * 1024;
+      if (file.size > maxBytes) {
+        showBanner('Photo ka size 4.5 MB se kam rakhein taaki upload fast ho.', 'warn');
+        event.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        state.attachedImage = {
+          dataUrl: reader.result,
+          name: file.name,
+          type: file.type
+        };
+        document.getElementById('imagePreviewThumb').src = reader.result;
+        document.getElementById('imageFileName').textContent = file.name;
+        document.getElementById('imagePreviewContainer').classList.remove('hidden');
+      };
+      reader.onerror = () => {
+        showBanner('Photo padhne mein error aaya. Dobara try karein.', 'error');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearAttachedImage() {
+      state.attachedImage = null;
+      document.getElementById('imageInput').value = '';
+      document.getElementById('imagePreviewThumb').src = '';
+      document.getElementById('imagePreviewContainer').classList.add('hidden');
+    }
+
+    function toggleVoiceInput() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        showBanner('Is browser mein Voice Input (SpeechRecognition) support nahi hai. Kripya Google Chrome ka use karein.', 'warn');
+        return;
+      }
+
+      if (state.isRecording && state.recognition) {
+        state.recognition.stop();
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'hi-IN';
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      const micBtn = document.getElementById('micBtn');
+      const voiceStatus = document.getElementById('voiceStatusText');
+      const inputEl = document.getElementById('messageInput');
+      const existingText = inputEl.value.trim();
+
+      recognition.onstart = () => {
+        state.isRecording = true;
+        state.recognition = recognition;
+        micBtn.classList.add('recording-pulse', 'bg-rose-600', 'text-white', 'border-rose-600');
+        micBtn.classList.remove('bg-slate-100', 'text-slate-700');
+        voiceStatus.textContent = '🎤 Hindi mein boliye... (rukne ke liye dobara mic dabayein)';
+        voiceStatus.classList.remove('hidden');
+      };
+
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        inputEl.value = existingText ? `${existingText} ${transcript}`.trim() : transcript.trim();
+        autoResizeTextarea(inputEl);
+      };
+
+      recognition.onerror = (event) => {
+        let msg = 'Voice input mein dikkat aayi.';
+        if (event.error === 'not-allowed') {
+          msg = 'Mic permission allow karein taaki aap Hindi mein bol sakein.';
+        } else if (event.error === 'no-speech') {
+          msg = 'Koi aawaz sunai nahi di. Dobara try karein.';
+        }
+        showBanner(msg, 'warn');
+      };
+
+      recognition.onend = () => {
+        state.isRecording = false;
+        state.recognition = null;
+        micBtn.classList.remove('recording-pulse', 'bg-rose-600', 'text-white', 'border-rose-600');
+        micBtn.classList.add('bg-slate-100', 'text-slate-700');
+        voiceStatus.classList.add('hidden');
+        voiceStatus.textContent = '';
+      };
+
+      try {
+        recognition.start();
+      } catch (err) {
+        showBanner('Mic shuru nahi ho saka. Dobara koshish karein.', 'warn');
+      }
+    }
+
+    function toggleAutoSpeak() {
+      state.settings.autoSpeak = !state.settings.autoSpeak;
+      if (!state.settings.autoSpeak) {
+        stopSpeaking();
+      }
+      persistSettings();
+      renderHeader();
+    }
+
+    function cleanTextForSpeech(markdownStr) {
+      if (!markdownStr) return '';
+
+      let text = String(markdownStr);
+
+      text = text.replace(/```[\s\S]*?```/g, ' ');
+      text = text.replace(/`([^`]*)`/g, '$1');
+
+      text = text.replace(/^\s{0,3}#{1,6}\s*/gm, '');
+      text = text.replace(/^\s*>\s?/gm, '');
+      text = text.replace(/(\*\*|__)(.*?)\1/g, '$2');
+      text = text.replace(/(\*|_)(.*?)\1/g, '$2');
+      text = text.replace(/~~(.*?)~~/g, '$1');
+
+      try {
+        text = text.replace(/\p{Extended_Pictographic}/gu, ' ');
+        text = text.replace(/\p{Regional_Indicator}/gu, ' ');
+      } catch (e) {
+        text = text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, ' ');
+      }
+      text = text.replace(/[\uFE00-\uFE0F\u200D]/g, '');
+
+      text = text.replace(/^\s*[-*•+]\s+/gm, '');
+      text = text.replace(/^\s*\d+[.)]\s+/gm, '');
+      text = text.replace(/[\[\](){}<>|\\/^~@#$%&*+=_-]/g, ' ');
+
+      text = text
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map(line => (/[।.!?]$/.test(line) ? line : `${line}।`))
+        .join(' ');
+
+      return text.replace(/\s+/g, ' ').trim();
+    }
+
+    function speakHindiText(text) {
+      if (!('speechSynthesis' in window)) {
+        showBanner('Is browser mein Hindi Text-to-Speech support nahi hai.', 'warn');
+        return;
+      }
+      const clean = cleanTextForSpeech(text);
+      if (!clean) return;
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(clean);
+      utterance.lang = 'hi-IN';
+      utterance.rate = 0.98;
+
+      const voices = window.speechSynthesis.getVoices();
+      const hindiVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('hi'));
+      if (hindiVoice) {
+        utterance.voice = hindiVoice;
+      }
+
+      const stopBtn = document.getElementById('stopAudioBtn');
+      utterance.onstart = () => stopBtn.classList.remove('hidden');
+      utterance.onend = () => stopBtn.classList.add('hidden');
+      utterance.onerror = () => stopBtn.classList.add('hidden');
+
+      state.currentUtterance = utterance;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeaking() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      document.getElementById('stopAudioBtn').classList.add('hidden');
+    }
+
+    function autoResizeTextarea(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 128) + 'px';
+    }
+
+    function handleInputKeydown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        document.getElementById('chatForm').requestSubmit();
+      }
+    }
+
+    function buildEffectiveSystemPrompt(subject) {
+      let prompt = `${state.settings.systemPrompt || DEFAULT_SYSTEM_PROMPT}\n\nCurrent Subject: Class 6 ${subject}.`;
+      if (state.settings.chapterNotes && state.settings.chapterNotes.trim()) {
+        prompt += `\n\n--- TODAY'S CHAPTER NOTES / LESSON CONTEXT ---\n${state.settings.chapterNotes.trim()}\n--- END OF NOTES ---\nUse these notes whenever relevant to answer Ankita's questions accurately.`;
+      }
+      return prompt;
+    }
+
+    function buildOpenRouterMessages(chat) {
+      const messages = [
+        { role: 'system', content: buildEffectiveSystemPrompt(chat.subject) }
+      ];
+
+      const recent = chat.messages.slice(-12);
+      for (const m of recent) {
+        if (m.role === 'user' && m.imageDataUrl) {
+          const parts = [];
+          if (m.text && m.text.trim()) {
+            parts.push({ type: 'text', text: m.text.trim() });
+          } else {
+            parts.push({ type: 'text', text: 'Is photo mein jo sawaal ya topic hai, use Class 6 level par step-by-step samjhao.' });
+          }
+          parts.push({
+            type: 'image_url',
+            image_url: { url: m.imageDataUrl }
+          });
+          messages.push({ role: 'user', content: parts });
+        } else if (m.role === 'user' || m.role === 'assistant') {
+          if (m.text && m.text.trim()) {
+            messages.push({ role: 'user', content: m.text.trim() });
+          }
+        }
+      }
+
+      return messages;
+    }
+
+    async function handleSendMessage(event) {
+      event.preventDefault();
+      if (state.isSending) return;
+
+      const inputEl = document.getElementById('messageInput');
+      const text = inputEl.value.trim();
+      const imageObj = state.attachedImage;
+
+      if (!text && !imageObj) {
+        showBanner('Kripya pehle koi sawaal likhein, bolein, ya photo attach karein.', 'warn');
+        return;
+      }
+
+      if (!state.settings.apiKey || !state.settings.apiKey.trim()) {
+        showBanner('OpenRouter API Key missing hai! Pehle Settings mein jaakar apni API Key daalein.', 'error');
+        openSettings();
+        return;
+      }
+
+      showBanner('');
+      const chat = getActiveChat();
+
+      const userMsg = {
+        id: 'msg_u_' + Date.now(),
+        role: 'user',
+        text: text || (imageObj ? 'Is photo ko samjhao aur step-by-step guide karo.' : ''),
+        imageDataUrl: imageObj ? imageObj.dataUrl : null,
+        timestamp: Date.now()
+      };
+
+      chat.messages.push(userMsg);
+      chat.updatedAt = Date.now();
+
+      if (chat.messages.filter(m => m.role === 'user').length === 1 && text) {
+        chat.title = text.slice(0, 38) + (text.length > 38 ? '...' : '');
+      }
+
+      inputEl.value = '';
+      autoResizeTextarea(inputEl);
+      clearAttachedImage();
+
+      state.isSending = true;
+      document.getElementById('sendBtn').disabled = true;
+      persistChats();
+      renderAll();
+
+      const modelToUse = (state.settings.modelId || 'openrouter/free').trim();
+
+      try {
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${state.settings.apiKey.trim()}`,
+            'HTTP-Referer': window.location.origin || 'https://localhost',
+            'X-Title': 'Class 6 AI Study Tutor'
+          },
+          body: JSON.stringify({
+            model: modelToUse,
+            messages: buildOpenRouterMessages(chat)
+          })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          const apiErrMsg = data?.error?.message || `HTTP ${response.status} error`;
+          if (response.status === 401) {
+            throw new Error('API Key galat ya expire ho gayi hai. Settings mein jaakar sahi OpenRouter API Key check karein.');
+          }
+          if (response.status === 429 || response.status >= 500) {
+            throw new Error(`Model "${modelToUse}" abhi busy ya temporary down hai (${apiErrMsg}). Settings mein dusra free model try karein.`);
+          }
+          throw new Error(`OpenRouter Error: ${apiErrMsg}`);
+        }
+
+        const replyText = data?.choices?.[0]?.message?.content;
+        if (!replyText || !String(replyText).trim()) {
+          throw new Error(`Model "${modelToUse}" ne khali jawab diya. Kripya dobara bhejein ya Settings mein model badal kar dekhein.`);
+        }
+
+        const assistantMsg = {
+          id: 'msg_a_' + Date.now(),
+          role: 'assistant',
+          text: String(replyText).trim(),
+          timestamp: Date.now()
+        };
+
+        chat.messages.push(assistantMsg);
+        chat.updatedAt = Date.now();
+        persistChats();
+
+        if (state.settings.autoSpeak) {
+          speakHindiText(assistantMsg.text);
+        }
+      } catch (err) {
+        const friendlyError = err && err.message ? err.message : 'Network ya model error aaya.';
+        showBanner(friendlyError, 'error');
+        chat.messages.push({
+          id: 'msg_err_' + Date.now(),
+          role: 'assistant',
+          text: `⚠️ **Maaf kijiye, abhi jawab nahi mil paya:**\n${friendlyError}\n\nAgar photo bheji thi, to verify karein ki selected model image/vision support karta ho (jaise \`openrouter/free\`).`,
+          timestamp: Date.now()
+        });
+        persistChats();
+      } finally {
+        state.isSending = false;
+        document.getElementById('sendBtn').disabled = false;
+        renderAll();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const msgInput = document.getElementById('messageInput');
+      msgInput.addEventListener('input', () => autoResizeTextarea(msgInput));
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
+      }
+
+      loadState();
+      renderAll();
+
+      if (!state.settings.apiKey) {
+        showBanner('Shuru karne ke liye top-right mein ⚙️ Settings par click karke apni OpenRouter API Key daalein.', 'warn');
+      }
+    });
+  </script>
+</body>
+</html>
