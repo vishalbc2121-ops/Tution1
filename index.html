@@ -75,7 +75,7 @@
           <span class="text-2xl">📘</span>
           <div>
             <h1 class="font-bold text-base leading-tight">Class 6 Study Buddy</h1>
-            <p class="text-xs text-indigo-100">CBSE / NCERT • Ankita</p>
+            <p class="text-xs text-indigo-100">Syllabus Companion • Ankita</p>
           </div>
         </div>
         <button onclick="toggleSidebar(false)" class="lg:hidden p-1.5 rounded-lg hover:bg-white/20" title="Close sidebar">
@@ -98,6 +98,15 @@
         </button>
         <button onclick="createNewSubjectChat('Social Science')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/60 transition text-left">
           ➕ SST
+        </button>
+        <button onclick="createNewSubjectChat('Computers')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200/60 transition text-left">
+          ➕ Computers
+        </button>
+        <button onclick="createNewSubjectChat('Telugu')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200/60 transition text-left">
+          ➕ Telugu
+        </button>
+        <button onclick="createNewSubjectChat('Hindi')" class="col-span-2 text-xs font-medium px-2.5 py-2 rounded-xl bg-orange-50 text-orange-800 hover:bg-orange-100 border border-orange-200/60 transition text-left">
+          ➕ Hindi
         </button>
       </div>
     </div>
@@ -274,20 +283,22 @@
       ACTIVE_CHAT: 'ankita_class6_tutor_active_chat_v1'
     };
 
-    const DEFAULT_SYSTEM_PROMPT = `You are a friendly, patient, and encouraging personal tutor for Ankita, a Class 6 student in India (CBSE/NCERT level).
+    const DEFAULT_SYSTEM_PROMPT = `You are a friendly, patient, and encouraging personal tutor for Ankita, a Class 6 student in India.
 
 Your teaching rules:
-1. Reply in simple, conversational Hindi (Devanagari script) mixed with common English school terms (like Fraction, Photosynthesis, Force, Noun, Triangle, LCM) so Hindi text-to-speech reads it naturally and clearly.
-2. Explain concepts step-by-step using short bullet points and everyday Indian examples.
-3. For Maths and Science, explain the method and steps first before giving the final answer.
-4. Never just dump a direct homework answer—guide her through the logic and ask 1 short check-for-understanding question at the end.
-5. Keep the tone warm, supportive, and easy for an 11-12-year-old student to understand.`;
+1. By default, explain in simple, conversational Hindi (Devanagari script) mixed with common English school terms (like Fraction, Photosynthesis, Force, Noun, Triangle, LCM, Keyboard, Browser) so Hindi text-to-speech reads it naturally and clearly.
+2. When the subject is Telugu or Hindi, show the target language word/sentence/poem/grammar clearly in its native script along with simple Hindi meaning and easy pronunciation guidance.
+3. When the subject is Computers, explain Class 6 computer concepts (hardware, software, input/output, files, internet safety, basic logic) using simple everyday examples.
+4. Break answers into short steps or bullet points, guide her through logic rather than dumping direct homework answers, and end with 1 short check-for-understanding question.`;
 
     const SUBJECT_META = {
       Maths: { badgeClass: 'bg-indigo-100 text-indigo-700', icon: '➗', defaultTitle: 'Class 6 Maths Doubt Solver' },
       Science: { badgeClass: 'bg-emerald-100 text-emerald-700', icon: '🔬', defaultTitle: 'Class 6 Science Explorer' },
       English: { badgeClass: 'bg-amber-100 text-amber-800', icon: '📖', defaultTitle: 'Class 6 English Helper' },
-      'Social Science': { badgeClass: 'bg-sky-100 text-sky-700', icon: '🌍', defaultTitle: 'Class 6 Social Science Guide' }
+      'Social Science': { badgeClass: 'bg-sky-100 text-sky-700', icon: '🌍', defaultTitle: 'Class 6 Social Science Guide' },
+      Computers: { badgeClass: 'bg-violet-100 text-violet-700', icon: '💻', defaultTitle: 'Class 6 Computers Lab Buddy' },
+      Telugu: { badgeClass: 'bg-teal-100 text-teal-700', icon: '🅰️', defaultTitle: 'Class 6 Telugu Bhasha Helper' },
+      Hindi: { badgeClass: 'bg-orange-100 text-orange-800', icon: '📝', defaultTitle: 'Class 6 Hindi Bhasha Helper' }
     };
 
     let state = {
@@ -403,7 +414,7 @@ Your teaching rules:
         welcomeChat.messages.push({
           id: 'msg-welcome-1',
           role: 'assistant',
-          text: 'नमस्ते Ankita! मैं तुम्हारा Class 6 Study Buddy हूँ। 😊\n\n- किसी भी **Maths** या **Science** topic को step-by-step समझ सकती हो।\n- Copy या textbook page की **photo** upload करके सवाल पूछ सकती हो।\n- **🎤 Mic** दबाकर Hindi में बोल भी सकती हो या **🔊** से जवाब सुन सकती हो।\n\nआज हम किस topic या chapter से शुरू करें?',
+          text: 'नमस्ते Ankita! मैं तुम्हारा Class 6 Study Buddy हूँ। 😊\n\n- **Maths, Science, English, SST, Computers, Telugu, और Hindi** किसी भी subject की chat शुरू कर सकती हो।\n- Copy या textbook page की **photo** upload करके सवाल पूछ सकती हो।\n- **🎤 Mic** दबाकर Hindi में बोल भी सकती हो या **🔊** से जवाब सुन सकती हो।\n\nआज हम किस topic या chapter से शुरू करें?',
           timestamp: Date.now()
         });
         state.chats.push(welcomeChat);
@@ -454,7 +465,7 @@ Your teaching rules:
       newChat.messages.push({
         id: 'msg_' + Date.now(),
         role: 'assistant',
-        text: `**${subject}** ki nayi study chat shuru ho gayi hai! ${meta.icon}\n\nApna chapter, topic, ya homework ka doubt poochho—hum step-by-step samjhenge.`,
+        text: `**${subject}** ki nayi study chat shuru ho gayi hai! ${meta.icon}\n\nApna chapter, topic, word meaning, ya homework ka doubt poochho—hum step-by-step samjhenge.`,
         timestamp: Date.now()
       });
       state.chats.unshift(newChat);
@@ -684,8 +695,8 @@ Your teaching rules:
       const subj = chat.subject;
 
       const templates = {
-        'Maths Step-by-Step': `Is ${subj === 'Maths' ? 'Maths' : 'topic'} ka sawaal step-by-step samjhao aur aakhir mein ek practice question do: `,
-        'Science Samjhao': `Yeh Science concept aasaan Hindi mein rozmarra ki zindagi ke example ke saath samjhao: `,
+        'Maths Step-by-Step': `Is ${subj === 'Maths' ? 'Maths' : subj} ka sawaal step-by-step samjhao aur aakhir mein ek practice question do: `,
+        'Science Samjhao': `Yeh ${subj} topic aasaan Hindi mein rozmarra ki zindagi ke example ke saath samjhao: `,
         '5 MCQ Quiz Banao': `Aaj ke ${subj} topic par 5 simple Class 6 MCQs banao. Pehle sawaal poocho, answer abhi mat batao:`
       };
 
@@ -895,6 +906,13 @@ Your teaching rules:
 
     function buildEffectiveSystemPrompt(subject) {
       let prompt = `${state.settings.systemPrompt || DEFAULT_SYSTEM_PROMPT}\n\nCurrent Subject: Class 6 ${subject}.`;
+      if (subject === 'Telugu') {
+        prompt += '\nFor Telugu: Always write Telugu words/lines in Telugu script first, then give easy Hindi meaning and simple pronunciation guide.';
+      } else if (subject === 'Hindi') {
+        prompt += '\nFor Hindi: Focus on clear Devanagari spelling, word meanings (शब्दार्थ), grammar, and simple explanation.';
+      } else if (subject === 'Computers') {
+        prompt += '\nFor Computers: Explain digital/computer concepts clearly using Class 6 school examples without overly dense jargon.';
+      }
       if (state.settings.chapterNotes && state.settings.chapterNotes.trim()) {
         prompt += `\n\n--- TODAY'S CHAPTER NOTES / LESSON CONTEXT ---\n${state.settings.chapterNotes.trim()}\n--- END OF NOTES ---\nUse these notes whenever relevant to answer Ankita's questions accurately.`;
       }
