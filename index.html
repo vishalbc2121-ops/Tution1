@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Class 6 AI Study Tutor — Ankita's Learning Buddy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -20,8 +20,8 @@
   </script>
   <style>
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-thumb {
       background: #CBD5E1;
@@ -52,7 +52,8 @@
       background: rgba(15, 23, 42, 0.08);
       padding: 0.1rem 0.35rem;
       border-radius: 0.3rem;
-      font-size: 0.9em;
+      font-size: 0.88em;
+      word-break: break-word;
     }
     @keyframes pulse-ring {
       0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55); }
@@ -64,12 +65,12 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 h-screen overflow-hidden flex select-none sm:select-auto">
+<body class="bg-slate-100 text-slate-800 h-dvh max-h-dvh overflow-hidden flex">
 
-  <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/40 z-20 hidden lg:hidden"></div>
+  <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/45 z-20 hidden lg:hidden"></div>
 
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-200 -translate-x-full lg:translate-x-0">
-    <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-indigo-600 to-sky-500 text-white">
+  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-[82vw] max-w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-200 -translate-x-full lg:translate-x-0">
+    <div class="p-3.5 sm:p-4 border-b border-slate-100 bg-gradient-to-r from-indigo-600 to-sky-500 text-white shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <span class="text-2xl">📘</span>
@@ -78,34 +79,34 @@
             <p class="text-xs text-indigo-100">Syllabus Companion • Ankita</p>
           </div>
         </div>
-        <button onclick="toggleSidebar(false)" class="lg:hidden p-1.5 rounded-lg hover:bg-white/20" title="Close sidebar">
+        <button onclick="toggleSidebar(false)" class="lg:hidden h-9 w-9 rounded-xl hover:bg-white/20 flex items-center justify-center text-base" title="Close sidebar">
           ✕
         </button>
       </div>
     </div>
 
-    <div class="p-3 border-b border-slate-100 bg-slate-50/70">
+    <div class="p-3 border-b border-slate-100 bg-slate-50/70 shrink-0">
       <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Nayi Subject Chat Shuru Karein</p>
       <div class="grid grid-cols-2 gap-1.5">
-        <button onclick="createNewSubjectChat('Maths')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200/60 transition text-left">
+        <button onclick="createNewSubjectChat('Maths')" class="text-xs font-medium px-2.5 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200/60 transition text-left">
           ➕ Maths
         </button>
-        <button onclick="createNewSubjectChat('Science')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/60 transition text-left">
+        <button onclick="createNewSubjectChat('Science')" class="text-xs font-medium px-2.5 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/60 transition text-left">
           ➕ Science
         </button>
-        <button onclick="createNewSubjectChat('English')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/60 transition text-left">
+        <button onclick="createNewSubjectChat('English')" class="text-xs font-medium px-2.5 py-2.5 rounded-xl bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/60 transition text-left">
           ➕ English
         </button>
-        <button onclick="createNewSubjectChat('Social Science')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/60 transition text-left">
+        <button onclick="createNewSubjectChat('Social Science')" class="text-xs font-medium px-2.5 py-2.5 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/60 transition text-left">
           ➕ SST
         </button>
-        <button onclick="createNewSubjectChat('Computers')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200/60 transition text-left">
+        <button onclick="createNewSubjectChat('Computers')" class="text-xs font-medium px-2.5 py-2.5 rounded-xl bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200/60 transition text-left">
           ➕ Computers
         </button>
-        <button onclick="createNewSubjectChat('Telugu')" class="text-xs font-medium px-2.5 py-2 rounded-xl bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200/60 transition text-left">
+        <button onclick="createNewSubjectChat('Telugu')" class="text-xs font-medium px-2.5 py-2.5 rounded-xl bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200/60 transition text-left">
           ➕ Telugu
         </button>
-        <button onclick="createNewSubjectChat('Hindi')" class="col-span-2 text-xs font-medium px-2.5 py-2 rounded-xl bg-orange-50 text-orange-800 hover:bg-orange-100 border border-orange-200/60 transition text-left">
+        <button onclick="createNewSubjectChat('Hindi')" class="col-span-2 text-xs font-medium px-2.5 py-2.5 rounded-xl bg-orange-50 text-orange-800 hover:bg-orange-100 border border-orange-200/60 transition text-left">
           ➕ Hindi
         </button>
       </div>
@@ -113,7 +114,7 @@
 
     <div class="flex-1 overflow-y-auto p-3 space-y-1.5" id="chatList"></div>
 
-    <div class="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-2">
+    <div class="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-2 shrink-0">
       <button onclick="openSettings()" class="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs transition">
         <span>⚙️</span> Settings
       </button>
@@ -123,73 +124,73 @@
     </div>
   </aside>
 
-  <main class="flex-1 flex flex-col h-screen min-w-0 bg-gradient-to-b from-indigo-50/40 via-white to-slate-50">
-    <header class="h-16 bg-white/95 backdrop-blur border-b border-slate-200 px-3 sm:px-5 flex items-center justify-between gap-2 shrink-0">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <button onclick="toggleSidebar(true)" class="p-2 rounded-xl hover:bg-slate-100 text-slate-700 transition" title="Menu">
+  <main class="flex-1 flex flex-col h-dvh min-w-0 bg-gradient-to-b from-indigo-50/40 via-white to-slate-50">
+    <header class="min-h-14 sm:h-16 bg-white/95 backdrop-blur border-b border-slate-200 px-2.5 sm:px-5 py-2 flex items-center justify-between gap-1.5 shrink-0">
+      <div class="flex items-center gap-2 min-w-0">
+        <button onclick="toggleSidebar(true)" class="h-10 w-10 rounded-xl hover:bg-slate-100 text-slate-700 flex items-center justify-center text-base shrink-0 transition" title="Menu">
           ☰
         </button>
         <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <span id="activeSubjectBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 shrink-0">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span id="activeSubjectBadge" class="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 shrink-0">
               Maths
             </span>
-            <h2 id="activeChatTitle" class="font-bold text-slate-800 text-sm sm:text-base truncate">
+            <h2 id="activeChatTitle" class="font-bold text-slate-800 text-xs sm:text-base truncate">
               Class 6 Maths Doubt Solver
             </h2>
           </div>
-          <p id="activeModelSubtitle" class="text-[11px] text-slate-500 truncate">
+          <p id="activeModelSubtitle" class="text-[10px] sm:text-[11px] text-slate-500 truncate mt-0.5">
             Model: openrouter/free • Hindi Audio & Photo Ready
           </p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 shrink-0">
-        <button id="autoSpeakBtn" onclick="toggleAutoSpeak()" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100" title="AI ke jawab apne aap Hindi aawaz mein sunne ke liye">
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="autoSpeakBtn" onclick="toggleAutoSpeak()" class="h-9 sm:h-10 flex items-center gap-1 text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 rounded-xl border transition bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100" title="AI ke jawab apne aap Hindi aawaz mein sunne ke liye">
           <span id="autoSpeakIcon">🔊</span>
-          <span id="autoSpeakLabel" class="hidden sm:inline">Auto-Speak: ON</span>
+          <span id="autoSpeakLabel" class="hidden md:inline">Auto-Speak: ON</span>
         </button>
-        <button onclick="openSettings()" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition" title="API Key, Model aur Chapter Notes">
+        <button onclick="openSettings()" class="h-9 sm:h-10 flex items-center gap-1 text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition" title="API Key, Model, Syllabus Link aur Notes">
           <span>⚙️</span>
           <span class="hidden md:inline">Settings</span>
         </button>
       </div>
     </header>
 
-    <div id="statusBanner" class="hidden px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between gap-2 border-b"></div>
+    <div id="statusBanner" class="hidden px-3 sm:px-4 py-2 text-xs font-medium items-center justify-between gap-2 border-b shrink-0"></div>
 
-    <div id="chatMessages" class="flex-1 overflow-y-auto px-3 sm:px-6 py-5 space-y-4"></div>
+    <div id="chatMessages" class="flex-1 overflow-y-auto px-3 sm:px-6 py-4 space-y-3.5"></div>
 
-    <div class="bg-white border-t border-slate-200 px-3 sm:px-6 pt-2.5 pb-3 shrink-0">
-      <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-        <button type="button" onclick="applyQuickChip('Maths Step-by-Step')" class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 transition">
+    <div class="bg-white border-t border-slate-200 px-2.5 sm:px-6 pt-2 pb-[max(0.65rem,env(safe-area-inset-bottom))] shrink-0">
+      <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-2">
+        <button type="button" onclick="applyQuickChip('Maths Step-by-Step')" class="shrink-0 text-[11px] sm:text-xs font-semibold px-3 py-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 transition">
           ➗ Maths Step-by-Step
         </button>
-        <button type="button" onclick="applyQuickChip('Science Samjhao')" class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 transition">
+        <button type="button" onclick="applyQuickChip('Science Samjhao')" class="shrink-0 text-[11px] sm:text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 transition">
           🔬 Science Samjhao
         </button>
-        <button type="button" onclick="applyQuickChip('5 MCQ Quiz Banao')" class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 transition">
+        <button type="button" onclick="applyQuickChip('5 MCQ Quiz Banao')" class="shrink-0 text-[11px] sm:text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 transition">
           📝 5 MCQ Quiz Banao
         </button>
-        <button type="button" onclick="stopSpeaking()" id="stopAudioBtn" class="hidden shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition">
+        <button type="button" onclick="stopSpeaking()" id="stopAudioBtn" class="hidden shrink-0 text-[11px] sm:text-xs font-semibold px-3 py-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition">
           ⏹️ Audio Roko
         </button>
       </div>
 
-      <div id="imagePreviewContainer" class="hidden mb-2 p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+      <div id="imagePreviewContainer" class="hidden mb-2 p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2.5">
         <div class="flex items-center gap-2.5 min-w-0">
-          <img id="imagePreviewThumb" src="" alt="Uploaded page preview" class="h-14 w-14 object-cover rounded-lg border border-slate-300 shrink-0" />
+          <img id="imagePreviewThumb" src="" alt="Uploaded page preview" class="h-12 w-12 object-cover rounded-lg border border-slate-300 shrink-0" />
           <div class="min-w-0">
             <p class="text-xs font-semibold text-slate-700 truncate" id="imageFileName">Photo attached</p>
             <p class="text-[11px] text-slate-500">Saath mein apna sawaal likhein ya bolein</p>
           </div>
         </div>
-        <button type="button" onclick="clearAttachedImage()" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 transition">
+        <button type="button" onclick="clearAttachedImage()" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 transition shrink-0">
           Hatayein ✕
         </button>
       </div>
 
-      <form id="chatForm" onsubmit="handleSendMessage(event)" class="flex items-end gap-2">
+      <form id="chatForm" onsubmit="handleSendMessage(event)" class="flex items-end gap-1.5 sm:gap-2">
         <input type="file" id="imageInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event)" />
 
         <button type="button" onclick="document.getElementById('imageInput').click()" class="h-11 w-11 rounded-2xl bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 border border-slate-200 flex items-center justify-center text-lg shrink-0 transition" title="Textbook ya copy ki photo upload karein">
@@ -200,28 +201,28 @@
           🎤
         </button>
 
-        <textarea id="messageInput" rows="1" placeholder="Yahan sawaal likhein ya mic/photo ka use karein..." class="flex-1 resize-none max-h-32 rounded-2xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 text-sm sm:text-base text-slate-800 outline-none transition bg-white" onkeydown="handleInputKeydown(event)"></textarea>
+        <textarea id="messageInput" rows="1" placeholder="Sawaal likhein ya mic/photo use karein..." class="flex-1 min-w-0 resize-none max-h-28 rounded-2xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3 py-2.5 text-sm text-slate-800 outline-none transition bg-white" onkeydown="handleInputKeydown(event)"></textarea>
 
-        <button type="submit" id="sendBtn" class="h-11 px-4 sm:px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold text-sm flex items-center justify-center gap-1.5 shrink-0 shadow-sm transition">
-          <span>Bhejein</span>
+        <button type="submit" id="sendBtn" class="h-11 px-3.5 sm:px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1 shrink-0 shadow-sm transition">
+          <span class="hidden sm:inline">Bhejein</span>
           <span>➤</span>
         </button>
       </form>
-      <p id="voiceStatusText" class="text-[11px] text-slate-400 mt-1.5 px-1 hidden"></p>
+      <p id="voiceStatusText" class="text-[11px] text-slate-400 mt-1 px-1 hidden"></p>
     </div>
   </main>
 
-  <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-2xs hidden items-center justify-center p-3 sm:p-5">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-2xs hidden items-end sm:items-center justify-center p-0 sm:p-5">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl border border-slate-200 shadow-xl w-full max-w-2xl max-h-[92dvh] flex flex-col overflow-hidden">
+      <div class="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
         <div>
           <h3 class="font-bold text-base sm:text-lg text-slate-800">⚙️ Study Tutor Settings</h3>
-          <p class="text-xs text-slate-500">API Key, Model, Tutor Rules aur Chapter Notes yahan set karein</p>
+          <p class="text-xs text-slate-500">API Key, Model, Syllabus Link aur Chapter Notes set karein</p>
         </div>
-        <button onclick="closeSettings()" class="p-2 rounded-xl hover:bg-slate-200/70 text-slate-600 transition">✕</button>
+        <button onclick="closeSettings()" class="h-9 w-9 rounded-xl hover:bg-slate-200/70 text-slate-600 flex items-center justify-center transition">✕</button>
       </div>
 
-      <div class="p-5 overflow-y-auto space-y-4 text-sm">
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-4 text-sm">
         <div>
           <label for="apiKeyInput" class="block font-semibold text-slate-700 mb-1">
             OpenRouter API Key <span class="text-rose-500">*</span>
@@ -243,6 +244,16 @@
         </div>
 
         <div>
+          <label for="syllabusUrlInput" class="block font-semibold text-slate-700 mb-1">
+            🌐 Syllabus / Textbook Website Link (Optional)
+          </label>
+          <input type="url" id="syllabusUrlInput" placeholder="https://ncert.nic.in/textbook.php" class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 outline-none text-xs sm:text-sm" />
+          <p class="text-[11px] text-slate-500 mt-1">
+            Link daalne par app us website domain ke context ke saath syllabus-focused search use karegi (is feature mein OpenRouter web search credit lag sakta hai; khali rakhne par 100% free chat chalegi).
+          </p>
+        </div>
+
+        <div>
           <div class="flex items-center justify-between mb-1">
             <label for="systemPromptInput" class="font-semibold text-slate-700">
               Tutor System Prompt
@@ -251,7 +262,7 @@
               Default Reset
             </button>
           </div>
-          <textarea id="systemPromptInput" rows="6" class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 outline-none text-xs sm:text-sm leading-relaxed"></textarea>
+          <textarea id="systemPromptInput" rows="5" class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3.5 py-2.5 outline-none text-xs sm:text-sm leading-relaxed"></textarea>
         </div>
 
         <div>
@@ -265,11 +276,11 @@
         </div>
       </div>
 
-      <div class="px-5 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-2.5">
-        <button onclick="closeSettings()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-200/70 transition">
+      <div class="px-4 sm:px-5 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-2.5 shrink-0">
+        <button onclick="closeSettings()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-200/70 transition">
           Cancel
         </button>
-        <button onclick="saveSettings()" class="px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">
+        <button onclick="saveSettings()" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">
           Save Settings
         </button>
       </div>
@@ -278,7 +289,7 @@
 
   <script>
     const STORAGE_KEYS = {
-      SETTINGS: 'ankita_class6_tutor_settings_v1',
+      SETTINGS: 'ankita_class6_tutor_settings_v2',
       CHATS: 'ankita_class6_tutor_chats_v1',
       ACTIVE_CHAT: 'ankita_class6_tutor_active_chat_v1'
     };
@@ -305,6 +316,7 @@ Your teaching rules:
       settings: {
         apiKey: '',
         modelId: 'openrouter/free',
+        syllabusUrl: '',
         systemPrompt: DEFAULT_SYSTEM_PROMPT,
         chapterNotes: '',
         autoSpeak: true
@@ -317,6 +329,16 @@ Your teaching rules:
       isRecording: false,
       currentUtterance: null
     };
+
+    function extractDomain(urlStr) {
+      if (!urlStr || !urlStr.trim()) return '';
+      try {
+        const normalized = /^https?:\/\//i.test(urlStr.trim()) ? urlStr.trim() : `https://${urlStr.trim()}`;
+        return new URL(normalized).hostname.replace(/^www\./i, '');
+      } catch (e) {
+        return '';
+      }
+    }
 
     function escapeHtml(str) {
       return String(str)
@@ -370,7 +392,7 @@ Your teaching rules:
     function showBanner(message, type = 'warn') {
       const banner = document.getElementById('statusBanner');
       if (!message) {
-        banner.className = 'hidden px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between gap-2 border-b';
+        banner.className = 'hidden px-3 sm:px-4 py-2 text-xs font-medium items-center justify-between gap-2 border-b shrink-0';
         banner.innerHTML = '';
         return;
       }
@@ -379,10 +401,10 @@ Your teaching rules:
         error: 'bg-rose-50 text-rose-800 border-rose-200',
         info: 'bg-sky-50 text-sky-800 border-sky-200'
       };
-      banner.className = `px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between gap-2 border-b ${styles[type] || styles.warn}`;
+      banner.className = `px-3 sm:px-4 py-2 text-xs font-medium flex items-center justify-between gap-2 border-b shrink-0 ${styles[type] || styles.warn}`;
       banner.innerHTML = `
-        <span>${escapeHtml(message)}</span>
-        <button onclick="showBanner('')" class="text-xs font-bold opacity-70 hover:opacity-100 px-1.5">✕</button>
+        <span class="min-w-0 break-words">${escapeHtml(message)}</span>
+        <button onclick="showBanner('')" class="text-xs font-bold opacity-70 hover:opacity-100 px-1.5 shrink-0">✕</button>
       `;
     }
 
@@ -392,6 +414,7 @@ Your teaching rules:
         state.settings = {
           apiKey: typeof savedSettings.apiKey === 'string' ? savedSettings.apiKey : '',
           modelId: typeof savedSettings.modelId === 'string' && savedSettings.modelId.trim() ? savedSettings.modelId.trim() : 'openrouter/free',
+          syllabusUrl: typeof savedSettings.syllabusUrl === 'string' ? savedSettings.syllabusUrl.trim() : '',
           systemPrompt: typeof savedSettings.systemPrompt === 'string' && savedSettings.systemPrompt.trim() ? savedSettings.systemPrompt : DEFAULT_SYSTEM_PROMPT,
           chapterNotes: typeof savedSettings.chapterNotes === 'string' ? savedSettings.chapterNotes : '',
           autoSpeak: typeof savedSettings.autoSpeak === 'boolean' ? savedSettings.autoSpeak : true
@@ -545,7 +568,7 @@ Your teaching rules:
               <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${meta.badgeClass}">
                 ${meta.icon} ${escapeHtml(chat.subject)}
               </span>
-              <button onclick="deleteChat(event, '${chat.id}')" class="opacity-60 group-hover:opacity-100 text-xs text-slate-400 hover:text-rose-600 px-1 rounded transition" title="Chat hatayein">
+              <button onclick="deleteChat(event, '${chat.id}')" class="opacity-70 group-hover:opacity-100 text-xs text-slate-400 hover:text-rose-600 px-1.5 py-0.5 rounded transition" title="Chat hatayein">
                 ✕
               </button>
             </div>
@@ -560,21 +583,25 @@ Your teaching rules:
       const chat = getActiveChat();
       const meta = SUBJECT_META[chat.subject] || SUBJECT_META.Maths;
       const badge = document.getElementById('activeSubjectBadge');
-      badge.className = `text-[11px] font-bold px-2.5 py-0.5 rounded-full shrink-0 ${meta.badgeClass}`;
+      badge.className = `text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${meta.badgeClass}`;
       badge.textContent = `${meta.icon} ${chat.subject}`;
 
       document.getElementById('activeChatTitle').textContent = chat.title;
-      const notesStatus = state.settings.chapterNotes.trim() ? ' • Chapter Notes Active' : '';
+      const domain = extractDomain(state.settings.syllabusUrl);
+      const extras = [];
+      if (domain) extras.push(`Link: ${domain}`);
+      if (state.settings.chapterNotes.trim()) extras.push('Notes Active');
+      const extraText = extras.length ? ` • ${extras.join(' • ')}` : '';
       document.getElementById('activeModelSubtitle').textContent =
-        `Model: ${state.settings.modelId || 'openrouter/free'}${notesStatus}`;
+        `Model: ${state.settings.modelId || 'openrouter/free'}${extraText}`;
 
       const autoBtn = document.getElementById('autoSpeakBtn');
       const autoLabel = document.getElementById('autoSpeakLabel');
       if (state.settings.autoSpeak) {
-        autoBtn.className = 'flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
+        autoBtn.className = 'h-9 sm:h-10 flex items-center gap-1 text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 rounded-xl border transition bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
         autoLabel.textContent = 'Auto-Speak: ON';
       } else {
-        autoBtn.className = 'flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200';
+        autoBtn.className = 'h-9 sm:h-10 flex items-center gap-1 text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 rounded-xl border transition bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200';
         autoLabel.textContent = 'Auto-Speak: OFF';
       }
     }
@@ -586,15 +613,15 @@ Your teaching rules:
       container.innerHTML = chat.messages.map(msg => {
         const isUser = msg.role === 'user';
         const imageHtml = msg.imageDataUrl
-          ? `<img src="${msg.imageDataUrl}" alt="Uploaded study photo" class="max-h-60 rounded-xl border border-slate-200 mb-2 object-contain bg-white" />`
+          ? `<img src="${msg.imageDataUrl}" alt="Uploaded study photo" class="max-h-56 rounded-xl border border-slate-200 mb-2 object-contain bg-white" />`
           : '';
 
         if (isUser) {
           return `
             <div class="flex justify-end">
-              <div class="max-w-[86%] sm:max-w-[72%] rounded-2xl rounded-tr-sm bg-indigo-600 text-white px-4 py-3 shadow-xs">
+              <div class="max-w-[88%] sm:max-w-[72%] rounded-2xl rounded-tr-sm bg-indigo-600 text-white px-3.5 sm:px-4 py-2.5 sm:py-3 shadow-xs">
                 ${imageHtml}
-                <div class="message-content text-sm sm:text-[15px] leading-relaxed">${formatRichText(msg.text)}</div>
+                <div class="message-content text-sm leading-relaxed">${formatRichText(msg.text)}</div>
               </div>
             </div>
           `;
@@ -602,14 +629,14 @@ Your teaching rules:
 
         const encodedText = encodeURIComponent(msg.text || '');
         return `
-          <div class="flex items-start gap-2.5">
+          <div class="flex items-start gap-2 sm:gap-2.5">
             <div class="h-8 w-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">
               🎓
             </div>
-            <div class="max-w-[88%] sm:max-w-[75%] rounded-2xl rounded-tl-sm bg-white border border-slate-200/90 text-slate-800 px-4 py-3 shadow-2xs">
+            <div class="max-w-[88%] sm:max-w-[75%] rounded-2xl rounded-tl-sm bg-white border border-slate-200/90 text-slate-800 px-3.5 sm:px-4 py-2.5 sm:py-3 shadow-2xs">
               ${imageHtml}
-              <div class="message-content text-sm sm:text-[15px] leading-relaxed">${formatRichText(msg.text)}</div>
-              <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+              <div class="message-content text-sm leading-relaxed">${formatRichText(msg.text)}</div>
+              <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
                 <button type="button" onclick="speakHindiText(decodeURIComponent('${encodedText}'))" class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition">
                   <span>🔊</span>
                   <span>Listen (Hindi)</span>
@@ -623,7 +650,7 @@ Your teaching rules:
 
       if (state.isSending) {
         container.innerHTML += `
-          <div id="typingIndicator" class="flex items-start gap-2.5">
+          <div id="typingIndicator" class="flex items-start gap-2 sm:gap-2.5">
             <div class="h-8 w-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-bold shrink-0">
               🎓
             </div>
@@ -649,6 +676,7 @@ Your teaching rules:
     function openSettings() {
       document.getElementById('apiKeyInput').value = state.settings.apiKey || '';
       document.getElementById('modelIdInput').value = state.settings.modelId || 'openrouter/free';
+      document.getElementById('syllabusUrlInput').value = state.settings.syllabusUrl || '';
       document.getElementById('systemPromptInput').value = state.settings.systemPrompt || DEFAULT_SYSTEM_PROMPT;
       document.getElementById('chapterNotesInput').value = state.settings.chapterNotes || '';
       const modal = document.getElementById('settingsModal');
@@ -669,11 +697,18 @@ Your teaching rules:
     function saveSettings() {
       const apiKey = document.getElementById('apiKeyInput').value.trim();
       const modelId = document.getElementById('modelIdInput').value.trim() || 'openrouter/free';
+      const syllabusUrl = document.getElementById('syllabusUrlInput').value.trim();
       const systemPrompt = document.getElementById('systemPromptInput').value.trim() || DEFAULT_SYSTEM_PROMPT;
       const chapterNotes = document.getElementById('chapterNotesInput').value;
 
+      if (syllabusUrl && !extractDomain(syllabusUrl)) {
+        showBanner('Syllabus Website Link sahi URL format mein likhein (jaise https://ncert.nic.in/textbook.php).', 'warn');
+        return;
+      }
+
       state.settings.apiKey = apiKey;
       state.settings.modelId = modelId;
+      state.settings.syllabusUrl = syllabusUrl;
       state.settings.systemPrompt = systemPrompt;
       state.settings.chapterNotes = chapterNotes;
 
@@ -894,7 +929,7 @@ Your teaching rules:
 
     function autoResizeTextarea(el) {
       el.style.height = 'auto';
-      el.style.height = Math.min(el.scrollHeight, 128) + 'px';
+      el.style.height = Math.min(el.scrollHeight, 112) + 'px';
     }
 
     function handleInputKeydown(event) {
@@ -912,6 +947,9 @@ Your teaching rules:
         prompt += '\nFor Hindi: Focus on clear Devanagari spelling, word meanings (शब्दार्थ), grammar, and simple explanation.';
       } else if (subject === 'Computers') {
         prompt += '\nFor Computers: Explain digital/computer concepts clearly using Class 6 school examples without overly dense jargon.';
+      }
+      if (state.settings.syllabusUrl && state.settings.syllabusUrl.trim()) {
+        prompt += `\n\nSyllabus / Reference Website Link: ${state.settings.syllabusUrl.trim()}. Align explanations and topics with this syllabus reference whenever applicable.`;
       }
       if (state.settings.chapterNotes && state.settings.chapterNotes.trim()) {
         prompt += `\n\n--- TODAY'S CHAPTER NOTES / LESSON CONTEXT ---\n${state.settings.chapterNotes.trim()}\n--- END OF NOTES ---\nUse these notes whenever relevant to answer Ankita's questions accurately.`;
@@ -995,6 +1033,25 @@ Your teaching rules:
       renderAll();
 
       const modelToUse = (state.settings.modelId || 'openrouter/free').trim();
+      const domain = extractDomain(state.settings.syllabusUrl);
+
+      const payload = {
+        model: modelToUse,
+        messages: buildOpenRouterMessages(chat)
+      };
+
+      if (domain) {
+        payload.tools = [
+          {
+            type: 'openrouter:web_search',
+            parameters: {
+              allowed_domains: [domain],
+              max_results: 5,
+              search_context_size: 'medium'
+            }
+          }
+        ];
+      }
 
       try {
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -1005,10 +1062,7 @@ Your teaching rules:
             'HTTP-Referer': window.location.origin || 'https://localhost',
             'X-Title': 'Class 6 AI Study Tutor'
           },
-          body: JSON.stringify({
-            model: modelToUse,
-            messages: buildOpenRouterMessages(chat)
-          })
+          body: JSON.stringify(payload)
         });
 
         const data = await response.json().catch(() => ({}));
@@ -1049,7 +1103,7 @@ Your teaching rules:
         chat.messages.push({
           id: 'msg_err_' + Date.now(),
           role: 'assistant',
-          text: `⚠️ **Maaf kijiye, abhi jawab nahi mil paya:**\n${friendlyError}\n\nAgar photo bheji thi, to verify karein ki selected model image/vision support karta ho (jaise \`openrouter/free\`).`,
+          text: `⚠️ **Maaf kijiye, abhi jawab nahi mil paya:**\n${friendlyError}\n\nAgar Syllabus Link daala tha aur credit/tool error aaya hai, to link khali karke free mode mein try karein, ya photo ke saath vision-supported model check karein.`,
           timestamp: Date.now()
         });
         persistChats();
